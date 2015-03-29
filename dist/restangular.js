@@ -1,6 +1,6 @@
 /**
  * Restful Resources service for AngularJS apps
- * @version v1.4.0 - 2015-02-04 * @link https://github.com/mgonto/restangular
+ * @version v1.4.0 - 2015-03-29 * @link https://github.com/mgonto/restangular
  * @author Martin Gontovnikas <martin@gon.to>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */(function() {
@@ -558,15 +558,20 @@ restangular.provider('Restangular', function() {
         }
       }
 
-      var url = this.base(current);
+      var url;
+      if (absolutePattern.test(what)) {
+        url = what;
+      } else {
+        url = this.base(current);
 
-      if (what) {
-        var add = '';
-        if (!/\/$/.test(url)) {
-          add += '/';
+        if (what) {
+          var add = '';
+          if (!/\/$/.test(url)) {
+            add += '/';
+          }
+          add += what;
+          url += add;
         }
-        add += what;
-        url += add;
       }
 
       if (this.config.suffix &&
@@ -681,6 +686,10 @@ restangular.provider('Restangular', function() {
 
 
     Path.prototype.fetchUrl = function(current, what) {
+      if (absolutePattern.test(what)) {
+        return what;
+      }
+
       var baseUrl = this.base(current);
       if (what) {
         baseUrl += '/' + what;
@@ -725,7 +734,7 @@ restangular.provider('Restangular', function() {
                    replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
       }
 
-      if (!params) { return url; }
+      if (!params) { return url + (this.config.suffix || ''); }
 
       var parts = [];
       forEachSorted(params, function(value, key) {

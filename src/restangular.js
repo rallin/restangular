@@ -553,15 +553,20 @@ restangular.provider('Restangular', function() {
         }
       }
 
-      var url = this.base(current);
+      var url;
+      if (absolutePattern.test(what)) {
+        url = what;
+      } else {
+        url = this.base(current);
 
-      if (what) {
-        var add = '';
-        if (!/\/$/.test(url)) {
-          add += '/';
+        if (what) {
+          var add = '';
+          if (!/\/$/.test(url)) {
+            add += '/';
+          }
+          add += what;
+          url += add;
         }
-        add += what;
-        url += add;
       }
 
       if (this.config.suffix &&
@@ -676,6 +681,10 @@ restangular.provider('Restangular', function() {
 
 
     Path.prototype.fetchUrl = function(current, what) {
+      if (absolutePattern.test(what)) {
+        return what;
+      }
+
       var baseUrl = this.base(current);
       if (what) {
         baseUrl += '/' + what;
